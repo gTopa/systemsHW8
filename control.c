@@ -4,6 +4,7 @@
 #include <sys/sem.h>
 #include <sys/shm.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 union senum{
   int val;
@@ -35,7 +36,7 @@ int main(int argc, char *argv[]){
     shmid=shmget(ftok(".",12), sizeof(int), IPC_CREAT|0644|IPC_EXCL);
 
     int ptr;
-    shmat(shmid,&ptr,SHM_RDONLY);
+    shmat(shmid,&ptr,0);
     ptr=0;
     
     shmdt(&ptr);

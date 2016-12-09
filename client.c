@@ -5,6 +5,7 @@
 #include <sys/sem.h>
 #include <sys/shm.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 union senum{
   int val;
@@ -17,17 +18,19 @@ void view(){
   int shmid;
   shmid=shmget(ftok(".",12),sizeof(int),0);
   
-  int ptr;
-  shmat(shmid,&ptr,SHM_RDONLY);
-  printf("pointer: %d\n", ptr);
-
+  int *ptr=0;
+  ptr=shmat(shmid,ptr,SHM_RDONLY);
+  printf("pointer: %d\n", *ptr);
+  
   int fd = open("story.txt",O_RDONLY);
   char story[1000];
-  lseek(fd,-1*ptr,SEEK_END);
+  printf("%d\n",-1*(*ptr));
+  lseek(fd,-1*(*ptr),SEEK_END);
   int len=read(fd,story,sizeof(story)-1);
+  printf("len: %d",len);
   story[len]=0;
   
-  shmdt(&ptr);
+  shmdt(ptr);
   
   close(fd);
   printf("%s", story);
@@ -39,18 +42,18 @@ void add(){
 
   int fd=open("story.txt",O_WRONLY|O_APPEND,0);
 
-  write(fd,buff,sizeof(buff));
+  write(fd,buff,strlen(buff));
   close(fd);
 
   int shmid;
   shmid=shmget(ftok(".",12),sizeof(int),0);
   
-  int ptr;
-  shmat(shmid,&ptr,SHM_RDONLY);
+  int *ptr=0;
+  ptr=shmat(shmid,ptr,0);
   printf("len of buff: %d\n", strlen(buff));
-  ptr=strlen(buff);
+  *ptr=strlen(buff);
 
-  shmdt(&ptr);
+  shmdt(ptr);
 }
 
 int main(){
