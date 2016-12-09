@@ -2,6 +2,7 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/sem.h>
+#include <sys/shm.h>
 #include <fcntl.h>
 
 union senum{
@@ -21,7 +22,7 @@ void view(){
 }
 
 int main(int argc, char *argv[]){
-  int key=ftok("./sem.c",1);
+  int key=ftok(".",1);
   int semid;
   int shmid;
   if (strcmp(argv[1],"-c")==0){
@@ -33,6 +34,12 @@ int main(int argc, char *argv[]){
     
     shmid=shmget(ftok(".",12), sizeof(int), IPC_CREAT|0644|IPC_EXCL);
 
+    int ptr;
+    shmat(shmid,&ptr,SHM_RDONLY);
+    ptr=0;
+    
+    shmdt(&ptr);
+    
     int fd=open("./story.txt",O_CREAT|O_EXCL,0644);
     close(fd);
     
@@ -42,7 +49,7 @@ int main(int argc, char *argv[]){
     semid=semget(key,1,0);
     semctl(semid,0,IPC_RMID);
     shmid=shmget(ftok(".",12),sizeof(int),0);
-    shmctl(shmid,IPC_RMID);
+    shmctl(shmid,IPC_RMID,0);
     view();
   }
 }
