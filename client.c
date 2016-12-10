@@ -20,14 +20,11 @@ void view(){
   
   int *ptr=0;
   ptr=shmat(shmid,ptr,SHM_RDONLY);
-  printf("pointer: %d\n", *ptr);
   
   int fd = open("story.txt",O_RDONLY);
   char story[1000];
-  printf("%d\n",-1*(*ptr));
   lseek(fd,-1*(*ptr),SEEK_END);
   int len=read(fd,story,sizeof(story)-1);
-  printf("len: %d",len);
   story[len]=0;
   
   shmdt(ptr);
@@ -50,14 +47,13 @@ void add(){
   
   int *ptr=0;
   ptr=shmat(shmid,ptr,0);
-  printf("len of buff: %d\n", strlen(buff));
   *ptr=strlen(buff);
 
   shmdt(ptr);
 }
 
 int main(){
-  printf("Waiting...\n");
+  printf("Waiting...\n\n");
   int semid;
   semid=semget(ftok(".",1),1,0);
   
@@ -71,7 +67,7 @@ int main(){
   printf("Here is the last line of the story:\n");
   view();
 
-  printf("\n\nAdd to story (at most 999 characters):\n");
+  printf("\nAdd to story (at most 999 characters):\n");
   add();
 
   sb.sem_op=1;
