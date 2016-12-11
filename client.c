@@ -53,7 +53,7 @@ void add(){
 }
 
 int main(){
-  printf("Waiting...\n\n");
+  printf("Waiting your turn...\n");
   int semid;
   semid=semget(ftok(".",1),1,0);
   
@@ -72,4 +72,5 @@ int main(){
 
   sb.sem_op=1;
   semop(semid,&sb,1);
+  
 }

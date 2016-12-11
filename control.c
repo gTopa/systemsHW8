@@ -5,6 +5,8 @@
 #include <sys/shm.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <string.h>
+
 
 union senum{
   int val;
